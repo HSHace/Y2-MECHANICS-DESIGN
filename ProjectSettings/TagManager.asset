@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -11,7 +12,7 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
+  - Walls
   - 
   - 
   - 
@@ -40,4 +41,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2259678931
+    locked: 0
+  - name: Player
+    uniqueID: 2789022659
+    locked: 0
+  - name: Items
+    uniqueID: 1710743119
+    locked: 0
+  - name: Foreground
+    uniqueID: 3392789709
+    locked: 0
+  - name: Ground
+    uniqueID: 961982257
     locked: 0
