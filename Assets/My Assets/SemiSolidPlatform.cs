@@ -19,13 +19,13 @@ public class SemiSolidPlatform : MonoBehaviour
     {
         if (InputHandlerScr.m_b_InSlamActive)
         {
-            m_collider.enabled = false;
             StartCoroutine(EnableCollider());
         }
     }
 
     private IEnumerator EnableCollider()
     {
+        m_collider.enabled = false;
         yield return new WaitForSeconds(1f);
         m_collider.enabled = true;
     }

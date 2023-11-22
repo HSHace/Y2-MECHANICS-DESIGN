@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "2d7e2a41-860f-453f-8d3d-6b3ebcf6fa47",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Fire",
                     "type": "Button",
                     "id": "3f2fb1a5-35b1-41e3-b8c1-a813716d87d6",
@@ -42,18 +51,27 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Damage",
+                    "name": "Melee",
                     "type": "Button",
-                    "id": "fb2419dd-ddb8-4e6a-b47a-baeb0461f943",
+                    "id": "babe4816-c235-432b-9577-7a5e07ec4687",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Dash",
+                    "name": "Teleporter",
                     "type": "Button",
-                    "id": "2d7e2a41-860f-453f-8d3d-6b3ebcf6fa47",
+                    "id": "969b8aeb-b8da-45c4-bc49-e14d078be25c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Damage",
+                    "type": "Button",
+                    "id": "fb2419dd-ddb8-4e6a-b47a-baeb0461f943",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -118,17 +136,6 @@
                 },
                 {
                     "name": "",
-                    "id": "5818df87-d020-47ee-9f6d-e8ebf6cae490",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "958c3167-2516-4872-a9bf-a2fa8f52a3be",
                     "path": "<Keyboard>/h",
                     "interactions": "",
@@ -140,12 +147,45 @@
                 },
                 {
                     "name": "",
+                    "id": "adc8c280-d58f-48ae-831a-de8a22b0e893",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Melee",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3c231263-1c94-459c-8435-d84aa55d7c56",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Teleporter",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "95bd108f-61f2-42b9-b529-1a1bc85dd48f",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5818df87-d020-47ee-9f6d-e8ebf6cae490",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Fire",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

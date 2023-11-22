@@ -5,22 +5,21 @@ using UnityEngine.UI;
 
 public class StaminaComponent : MonoBehaviour
 {
-    public float m_CurrentStamina;
-    public float m_MaxStamina = 100.0f;
     public bool canMove;
     public bool m_b_InStaminaRegen;
+    public float m_CurrentStamina;
 
+    public float m_MaxStamina = 100.0f;
     private float idleRecovery = 0.5f;
 
     Coroutine c_RStaminaDrain;
-
-    PlayerCharacter PlayerCharacterScr;
     InputHandler InputHandlerScr;
+    HealthComponent HealthComponentScr;
 
     private void Awake()
     {
-        PlayerCharacterScr = GetComponent<PlayerCharacter>();
         InputHandlerScr = GetComponent<InputHandler>();
+        HealthComponentScr = GetComponent<HealthComponent>();
         m_CurrentStamina = m_MaxStamina;
         canMove = true;
     }
@@ -40,22 +39,15 @@ public class StaminaComponent : MonoBehaviour
         }
 
         canMove = (m_CurrentStamina > 0);
-        //if(m_CurrentStamina <= 0)
-        //{
-        //    canMove = false;
-        //}
-        //else if (m_CurrentStamina > 0)
-        //{
-        //    canMove = true;
-        //}
+
+        if(HealthComponentScr.c_RHealthRegeneration == null)
+        {
+            HealthComponentScr.c_RHealthRegeneration = StartCoroutine(HealthComponentScr.C_HealthRegeneration());
+        }
     }
     public void StaminaRegeneration(float stamina)
     {
         m_CurrentStamina = Mathf.Clamp(m_CurrentStamina + stamina, 0, m_MaxStamina);
-        stamina += 1f;
-        //currentStamina += stamina * Time.deltaTime;
-
-        Debug.Log("Stamina recovered");
     }
 
     public IEnumerator C_StaminaRegeneration()
@@ -65,12 +57,12 @@ public class StaminaComponent : MonoBehaviour
         while (InputHandlerScr.m_b_Idle && m_CurrentStamina < m_MaxStamina)
         {
             StaminaRegeneration(idleRecovery);
-            yield return new WaitForSeconds(0.5f);
-            idleRecovery += idleRecovery * 1.05f;
+            yield return new WaitForSeconds(0.25f);
+            idleRecovery += idleRecovery * 1.01f;
         }
 
+        c_RStaminaDrain = null;
         m_b_InStaminaRegen = false;
         idleRecovery = 0.5f;
-        c_RStaminaDrain = null;
     }
 }

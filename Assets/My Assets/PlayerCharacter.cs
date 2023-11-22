@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 public class PlayerCharacter : MonoBehaviour
 {
     [SerializeField] float SlamForce;
@@ -16,14 +17,20 @@ public class PlayerCharacter : MonoBehaviour
     [SerializeField] public float ApexGravity;
     [SerializeField] public float FallGravity;
     [SerializeField] public float JumpGravity;
-    [SerializeField] public float CoyoteTimer;
+    [SerializeField] private float CoyoteTimer;
+    [SerializeField] private float DashForce;
+    [SerializeField] private float DashTime;
+    [SerializeField] private float DashCooldown;
+    [SerializeField] public LayerMask m_LayerMask;
     [SerializeField] Transform castPosition;
-    [SerializeField] LayerMask m_LayerMask;
 
     public float m_faxis { get; set; }
+    public bool m_b_FacingRight = true;
     public bool isJumping;
     public bool isSlaming;
+    public bool isDashing;
     public bool isPlayerJumping;
+    public Vector2 FireDirection;
 
     bool gravityApexStatus;
     bool jumpBufferStatus;
@@ -31,12 +38,13 @@ public class PlayerCharacter : MonoBehaviour
 
     Coroutine c_RJumpBuffer;
     Coroutine c_RCoyoteTime;
+    Coroutine c_RDash;
 
     Rigidbody2D rb;
     InputHandler InputHandler;
     GroundedComp GroundedComp;
     StaminaComponent StaminaComponentScr;
-    
+    Fire FireScr;
     
     private void Awake()
     {
@@ -44,6 +52,7 @@ public class PlayerCharacter : MonoBehaviour
         GroundedComp = GetComponent<GroundedComp>();
         InputHandler = GetComponent<InputHandler>();
         StaminaComponentScr = GetComponent<StaminaComponent>();
+        FireScr = GetComponent<Fire>();
     }
 
     private void OnEnable()
@@ -63,6 +72,9 @@ public class PlayerCharacter : MonoBehaviour
             Debug.Log("Player is grounded!");
             isPlayerJumping = false;
             isJumping = false;
+            isSlaming = false;
+
+            rb.gravityScale = DefaultGravity;
 
             if (jumpBufferStatus)
             {
@@ -115,11 +127,17 @@ public class PlayerCharacter : MonoBehaviour
         rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
         rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
         StaminaComponentScr.StaminaDrain(0.2f);
+        //Debug.Log($"Axis: {m_faxis} ");
 
-        if (rb.velocity.x > MaxMoveSpeed)
+        if(m_faxis > 0 && !m_b_FacingRight)
         {
-            rb.AddForce(transform.right * -1 * m_faxis * moveSpeed * 1);
-            Debug.Log("Clamped velocity x");
+            Flip();
+            FireDirection = transform.right;
+        }
+        else if(m_faxis < 0 && m_b_FacingRight)
+        {
+            Flip();
+            FireDirection = -transform.right;
         }
     }
 
@@ -133,6 +151,47 @@ public class PlayerCharacter : MonoBehaviour
         if (!GroundedComp.IsGrounded)
         {
             isJumping = true;
+        }
+    }
+
+    public void Dash()
+    {
+        if(c_RDash == null && isDashing == false)
+        {
+            c_RDash = StartCoroutine(C_Dash());
+        }
+    }
+
+    public void Flip()
+    {
+        Vector2 currentScale = gameObject.transform.localScale;
+        currentScale.x *= -1;
+        gameObject.transform.localScale= currentScale;
+        m_b_FacingRight = !m_b_FacingRight;
+    }
+
+    public void SetTeleporterLocation(Transform teleporterLocation)
+    {
+        transform.position = teleporterLocation.position;
+    }
+
+    public IEnumerator C_Dash()
+    {
+        while (InputHandler.m_b_InDashActive)
+        {
+            isDashing = true;
+            rb.gravityScale = 0f;
+            //rb.velocity = new Vector2(transform.localScale.x * DashForce, 0f);
+            //rb.AddForce(Vector2.right * DashForce, ForceMode2D.Impulse);
+            rb.AddRelativeForce(rb.velocity * DashForce, ForceMode2D.Impulse);
+            Debug.Log("DASHED!!");
+            StaminaComponentScr.StaminaDrain(10f);
+            yield return new WaitForSeconds(DashTime);
+            rb.gravityScale = DefaultGravity;
+            isDashing = false;
+            yield return new WaitForSeconds(DashCooldown);
+            Debug.Log("DASH COOLDOWN DONE!!");
+            c_RDash = null;
         }
     }
 

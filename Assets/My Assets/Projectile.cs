@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    [SerializeField] public float ShurikenDamage;
+
     Rigidbody2D rb;
     PlayerCharacter PlayerCharacterScr;
     InputHandler InputHandlerScr;
@@ -18,12 +20,22 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            EnemyCharacter enemyCharacter = collision.gameObject.GetComponent<EnemyCharacter>();
+            enemyCharacter.TakeDamage(ShurikenDamage);
+            Destroy(gameObject);
+        }
+
         StartCoroutine(Destroy());
     }
 
     IEnumerator Destroy()
     {
-        yield return new WaitForSeconds(0.5f);
-        Destroy(gameObject);
+        if(gameObject!= null)
+        {
+            yield return new WaitForSeconds(0.5f);
+            Destroy(gameObject);
+        }
     }
 }
