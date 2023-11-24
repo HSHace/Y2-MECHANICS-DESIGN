@@ -36,9 +36,9 @@ public class GroundedComp : MonoBehaviour
         }
 
         //STICKY FEET
-        //if (InputHandler.c_RMove == null && IsGrounded == true)
-        //{
-        //    rb.velocity = new Vector2(0, rb.velocity.y);
-        //}
+        if (InputHandler.c_RMove == null && IsGrounded == true)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-//using Unity.Android.Gradle;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,22 +22,23 @@ public class PlayerCharacter : MonoBehaviour
     [SerializeField] private float DashCooldown;
     [SerializeField] public LayerMask m_LayerMask;
     [SerializeField] Transform castPosition;
+    [SerializeField] GameObject luffy;
 
     public float m_faxis { get; set; }
     public bool m_b_FacingRight = true;
     public bool isJumping;
     public bool isSlaming;
     public bool isDashing;
-    public bool isPlayerJumping;
+    public bool canDash;
     public Vector2 FireDirection;
 
-    bool gravityApexStatus;
+    public bool gravityApexStatus;
     bool jumpBufferStatus;
     bool coyoteTime;
 
     Coroutine c_RJumpBuffer;
     Coroutine c_RCoyoteTime;
-    Coroutine c_RDash;
+    public Coroutine c_RDash;
 
     Rigidbody2D rb;
     InputHandler InputHandler;
@@ -53,6 +53,7 @@ public class PlayerCharacter : MonoBehaviour
         InputHandler = GetComponent<InputHandler>();
         StaminaComponentScr = GetComponent<StaminaComponent>();
         FireScr = GetComponent<Fire>();
+        canDash = true;
     }
 
     private void OnEnable()
@@ -70,11 +71,14 @@ public class PlayerCharacter : MonoBehaviour
         if (grounded)
         {
             Debug.Log("Player is grounded!");
-            isPlayerJumping = false;
             isJumping = false;
             isSlaming = false;
+            canDash = true;
 
-            rb.gravityScale = DefaultGravity;
+            if(!isDashing)
+            {
+                rb.gravityScale = DefaultGravity;
+            }
 
             if (jumpBufferStatus)
             {
@@ -98,19 +102,22 @@ public class PlayerCharacter : MonoBehaviour
 
     public void PlayerJump()
     {
-        if (GroundedComp.IsGrounded)
+        if(!isDashing)
         {
-            Jump();
-        }
-        else if (coyoteTime)
-        {
-            Jump();
-            StopCoroutine(c_RCoyoteTime);
-            coyoteTime = false;
-        }
-        else if (!GroundedComp.IsGrounded)
-        {
-            c_RJumpBuffer = StartCoroutine(C_JumpBuffer());
+            if (GroundedComp.IsGrounded)
+            {
+                Jump();
+            }
+            else if (coyoteTime)
+            {
+                Jump();
+                StopCoroutine(c_RCoyoteTime);
+                coyoteTime = false;
+            }
+            else if (!GroundedComp.IsGrounded)
+            {
+                c_RJumpBuffer = StartCoroutine(C_JumpBuffer());
+            }
         }
     }
 
@@ -124,49 +131,54 @@ public class PlayerCharacter : MonoBehaviour
 
     public void Move()
     {
-        rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
-        rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
-        StaminaComponentScr.StaminaDrain(0.2f);
-        //Debug.Log($"Axis: {m_faxis} ");
+        if (!isDashing)
+        {
+            rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
+            rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
+            StaminaComponentScr.StaminaDrain(0.2f);
 
-        if(m_faxis > 0 && !m_b_FacingRight)
-        {
-            Flip();
-            FireDirection = transform.right;
-        }
-        else if(m_faxis < 0 && m_b_FacingRight)
-        {
-            Flip();
-            FireDirection = -transform.right;
+            //Debug.Log($"Axis: {m_faxis} ");
+
+            if (m_faxis > 0 && !m_b_FacingRight)
+            {
+                Flip(luffy);
+            }
+            else if (m_faxis < 0 && m_b_FacingRight)
+            {
+                Flip(luffy);
+            }
         }
     }
 
     public void Jump()
     {
-        StartCoroutine(C_JumpBlindness());
-        rb.velocity = new Vector2(rb.velocity.x, 0);
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        StaminaComponentScr.StaminaDrain(5f);
-
-        if (!GroundedComp.IsGrounded)
+        if(!isDashing)
         {
-            isJumping = true;
-        }
+            StartCoroutine(C_JumpBlindness());
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            StaminaComponentScr.StaminaDrain(5f);
+
+            if (!GroundedComp.IsGrounded)
+            {
+                isJumping = true;
+            }
+        } 
     }
 
     public void Dash()
     {
-        if(c_RDash == null && isDashing == false)
+        if(c_RDash == null && canDash == true)
         {
             c_RDash = StartCoroutine(C_Dash());
         }
     }
 
-    public void Flip()
+    public void Flip(GameObject luffy)
     {
-        Vector2 currentScale = gameObject.transform.localScale;
+        Vector2 currentScale = luffy.transform.localScale;
         currentScale.x *= -1;
-        gameObject.transform.localScale= currentScale;
+        luffy.transform.localScale= currentScale;
         m_b_FacingRight = !m_b_FacingRight;
     }
 
@@ -177,22 +189,23 @@ public class PlayerCharacter : MonoBehaviour
 
     public IEnumerator C_Dash()
     {
-        while (InputHandler.m_b_InDashActive)
-        {
-            isDashing = true;
-            rb.gravityScale = 0f;
-            //rb.velocity = new Vector2(transform.localScale.x * DashForce, 0f);
-            //rb.AddForce(Vector2.right * DashForce, ForceMode2D.Impulse);
-            rb.AddRelativeForce(rb.velocity * DashForce, ForceMode2D.Impulse);
-            Debug.Log("DASHED!!");
-            StaminaComponentScr.StaminaDrain(10f);
-            yield return new WaitForSeconds(DashTime);
-            rb.gravityScale = DefaultGravity;
-            isDashing = false;
-            yield return new WaitForSeconds(DashCooldown);
-            Debug.Log("DASH COOLDOWN DONE!!");
-            c_RDash = null;
-        }
+        isDashing = true;
+        canDash = false;
+        rb.gravityScale = 0f;
+        rb.AddForce(transform.up * DashForce/6, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(0.1f);
+        var initialVelocity = rb.velocity;
+        StaminaComponentScr.StaminaDrain(15f);
+        rb.velocity = FireScr.ProjectileSpawnPoint.right * DashForce;
+        yield return new WaitForSeconds(DashTime);
+        rb.velocity = new Vector2 (initialVelocity.x, 0);
+        rb.AddForce(FireScr.ProjectileSpawnPoint.right * DashForce/6, ForceMode2D.Impulse);
+        rb.gravityScale = DefaultGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(DashCooldown);
+        Debug.Log("DASH COOLDOWN DONE!!");
+        canDash = true;
+        c_RDash = null;
     }
 
     public IEnumerator C_JumpBuffer()
@@ -219,6 +232,7 @@ public class PlayerCharacter : MonoBehaviour
                 rb.gravityScale = ApexGravity;
                 gravityApexStatus = true;
             }
+
             yield return null;
         }
 

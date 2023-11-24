@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Walls
   - ProjectileTeleporter
+  - Ground
   layers:
   - Default
   - TransparentFX

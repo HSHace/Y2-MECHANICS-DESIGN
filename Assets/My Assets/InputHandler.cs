@@ -93,7 +93,6 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_MovePerformed(InputAction.CallbackContext context)
     {
-
         PlayerCharacterScr.m_faxis = context.ReadValue<float>();
         m_b_InMoveActive = true;
         m_b_Idle = false;
@@ -137,9 +136,10 @@ public class InputHandler : MonoBehaviour
     {
         m_b_InJumpActive = false;
         m_b_Idle = true;
+
         rb.gravityScale = PlayerCharacterScr.FallGravity;
 
-        if(c_RJump!= null)
+        if (c_RJump!= null)
         {
             StopCoroutine(c_RJump);
             c_RJump = null;
@@ -148,7 +148,7 @@ public class InputHandler : MonoBehaviour
         if(c_RGravityApex!= null)
         {
             StopCoroutine(c_RGravityApex);
-            rb.gravityScale = PlayerCharacterScr.FallGravity;
+            PlayerCharacterScr.gravityApexStatus = false;
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class HealthComponent : MonoBehaviour
 {
     [SerializeField] public float HealthRegenRate;
-    public float maxHealth = 100.0f;
+    [SerializeField] public float maxHealth = 100.0f;
     public float currentHealth { get; private set; }
     public bool dead;
     private bool m_b_InHeal;

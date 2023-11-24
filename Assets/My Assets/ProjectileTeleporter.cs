@@ -21,6 +21,7 @@ public class ProjectileTeleporter : MonoBehaviour
         PlayerCharacterScr = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCharacter>();
         InputHandlerScr = GameObject.FindGameObjectWithTag("Player").GetComponent<InputHandler>();
         FireScr = GameObject.FindGameObjectWithTag("Player").GetComponent<Fire>();
+        
         StartCoroutine(C_Destroy());
     }
 
@@ -34,6 +35,7 @@ public class ProjectileTeleporter : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Walls"))
         {
             StickToSurface(collision.contacts[0].point);
+            transform.parent = collision.transform;
             transform.position = TeleporterLocation.position;
 
             EnemyCharacter enemyCharacter = collision.gameObject.GetComponent<EnemyCharacter>();
@@ -41,6 +43,10 @@ public class ProjectileTeleporter : MonoBehaviour
             {
                 enemyCharacter.TakeDamage(TeleporterDamage);
             }
+        }
+        else if (collision.gameObject.CompareTag("Ground"))
+        {
+            StickToSurface(collision.contacts[0].point);
         }
     }
 

@@ -161,4 +161,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dfdbc826bb6d4e41bd2b60398c186f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShurikenDamage: 2
+  ShurikenDamage: 20
