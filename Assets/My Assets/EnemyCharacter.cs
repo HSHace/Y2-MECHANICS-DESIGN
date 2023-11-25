@@ -8,6 +8,7 @@ public class EnemyCharacter : MonoBehaviour
     [SerializeField] public float maxEnemyHealth = 100.0f;
     [SerializeField] SpriteRenderer enemySprite;
     [SerializeField] Material flashMaterial;
+    [SerializeField] GameObject DamageIndicator;
 
     Material defaultMaterial;
     Color defaultColor;
@@ -22,15 +23,40 @@ public class EnemyCharacter : MonoBehaviour
         defaultMaterial = enemySprite.material;
     }
 
+    private void Update()
+    {
+        
+    }
+
     public void TakeDamage(float damage)
     {
         currentEnemyHealth -= damage;
         StartCoroutine(C_SpriteFlash());
 
+        ShowDamageIndicator(-damage);
+
         if(currentEnemyHealth <= 0)
         {
             enemyDead = true;
             Die();
+        }
+    }
+
+    void ShowDamageIndicator(float damage)
+    {
+        if (DamageIndicator != null)
+        {
+            GameObject damageIndicator = Instantiate(DamageIndicator, transform.position, Quaternion.identity);
+            PopUpText popUpText = damageIndicator.GetComponent<PopUpText>();
+
+            if (popUpText != null)
+            {
+                popUpText.ShowText(damage);
+            }
+            else
+            {
+                Debug.LogWarning("Damage indicator prefab is missing PopUpText component.");
+            }
         }
     }
 

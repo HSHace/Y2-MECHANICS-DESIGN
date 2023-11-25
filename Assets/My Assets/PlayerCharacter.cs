@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerCharacter : MonoBehaviour
 {
+    [Header("Movement")]
     [SerializeField] float SlamForce;
     [SerializeField] float circleRadius;
     [SerializeField] float MaxMoveSpeed;
@@ -27,17 +28,19 @@ public class PlayerCharacter : MonoBehaviour
     public float m_faxis { get; set; }
     public bool m_b_FacingRight = true;
     public bool isJumping;
+    public bool isWalling;
     public bool isSlaming;
     public bool isDashing;
     public bool canDash;
-    public Vector2 FireDirection;
-
     public bool gravityApexStatus;
     bool jumpBufferStatus;
     bool coyoteTime;
 
+    public ParticleSystem Dust;
+
     Coroutine c_RJumpBuffer;
     Coroutine c_RCoyoteTime;
+    Coroutine c_RWalled;
     public Coroutine c_RDash;
 
     Rigidbody2D rb;
@@ -59,11 +62,13 @@ public class PlayerCharacter : MonoBehaviour
     private void OnEnable()
     {
         GroundedComp.OnGroundedChanged += Handle_GroundedChanged;
+        //GroundedComp.OnWallChanged += Handle_WalledChanged;
     }
 
     private void OnDisable()
     {
         GroundedComp.OnGroundedChanged -= Handle_GroundedChanged;
+        //GroundedComp.OnWallChanged -= Handle_WalledChanged;
     }
 
     public void Handle_GroundedChanged(bool grounded)
@@ -75,7 +80,7 @@ public class PlayerCharacter : MonoBehaviour
             isSlaming = false;
             canDash = true;
 
-            if(!isDashing)
+            if (!isDashing)
             {
                 rb.gravityScale = DefaultGravity;
             }
@@ -100,9 +105,56 @@ public class PlayerCharacter : MonoBehaviour
         }
     }
 
-    public void PlayerJump()
+    public void Move()
+    {
+        if (!isDashing)
+        {
+            ParticleDust();
+            //rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
+            rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
+            StaminaComponentScr.StaminaDrain(0.2f);
+
+            //Debug.Log($"Axis: {m_faxis} ");
+
+            if (m_faxis > 0 && !m_b_FacingRight)
+            {
+                Flip(luffy);
+            }
+            else if (m_faxis < 0 && m_b_FacingRight)
+            {
+                Flip(luffy);
+            }
+        }
+    }
+
+    public void Jump()
     {
         if(!isDashing)
+        {
+            isJumping = true;
+            StartCoroutine(C_JumpBlindness());
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            StaminaComponentScr.StaminaDrain(5f);
+
+            if (!GroundedComp.IsGrounded)
+            {
+                isJumping = true;
+            }
+        }
+    }
+
+    public void Dash()
+    {
+        if(c_RDash == null && canDash == true)
+        {
+            c_RDash = StartCoroutine(C_Dash());
+        }
+    }
+
+    public void PlayerJump()
+    {
+        if (!isDashing)
         {
             if (GroundedComp.IsGrounded)
             {
@@ -129,62 +181,25 @@ public class PlayerCharacter : MonoBehaviour
         isSlaming = true;
     }
 
-    public void Move()
+    public void Flip(GameObject player)
     {
-        if (!isDashing)
-        {
-            rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
-            rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
-            StaminaComponentScr.StaminaDrain(0.2f);
-
-            //Debug.Log($"Axis: {m_faxis} ");
-
-            if (m_faxis > 0 && !m_b_FacingRight)
-            {
-                Flip(luffy);
-            }
-            else if (m_faxis < 0 && m_b_FacingRight)
-            {
-                Flip(luffy);
-            }
-        }
-    }
-
-    public void Jump()
-    {
-        if(!isDashing)
-        {
-            StartCoroutine(C_JumpBlindness());
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            StaminaComponentScr.StaminaDrain(5f);
-
-            if (!GroundedComp.IsGrounded)
-            {
-                isJumping = true;
-            }
-        } 
-    }
-
-    public void Dash()
-    {
-        if(c_RDash == null && canDash == true)
-        {
-            c_RDash = StartCoroutine(C_Dash());
-        }
-    }
-
-    public void Flip(GameObject luffy)
-    {
-        Vector2 currentScale = luffy.transform.localScale;
+        Vector2 currentScale = player.transform.localScale;
         currentScale.x *= -1;
-        luffy.transform.localScale= currentScale;
+        player.transform.localScale= currentScale;
         m_b_FacingRight = !m_b_FacingRight;
     }
 
     public void SetTeleporterLocation(Transform teleporterLocation)
     {
         transform.position = teleporterLocation.position;
+    }
+
+    public void ParticleDust()
+    {
+        if (GroundedComp.IsGrounded)
+        {
+            Dust.Play();
+        }
     }
 
     public IEnumerator C_Dash()
@@ -194,16 +209,15 @@ public class PlayerCharacter : MonoBehaviour
         rb.gravityScale = 0f;
         rb.AddForce(transform.up * DashForce/6, ForceMode2D.Impulse);
         yield return new WaitForSeconds(0.1f);
-        var initialVelocity = rb.velocity;
-        StaminaComponentScr.StaminaDrain(15f);
+        Vector2 initialVelocity = rb.velocity;
         rb.velocity = FireScr.ProjectileSpawnPoint.right * DashForce;
+        StaminaComponentScr.StaminaDrain(15f);
         yield return new WaitForSeconds(DashTime);
-        rb.velocity = new Vector2 (initialVelocity.x, 0);
-        rb.AddForce(FireScr.ProjectileSpawnPoint.right * DashForce/6, ForceMode2D.Impulse);
+        rb.velocity = new Vector2 (initialVelocity.x * m_faxis, 0);
+        rb.AddForce(FireScr.ProjectileSpawnPoint.right * DashForce / 6, ForceMode2D.Impulse);
         rb.gravityScale = DefaultGravity;
         isDashing = false;
         yield return new WaitForSeconds(DashCooldown);
-        Debug.Log("DASH COOLDOWN DONE!!");
         canDash = true;
         c_RDash = null;
     }
@@ -238,6 +252,15 @@ public class PlayerCharacter : MonoBehaviour
 
         yield return new WaitForSeconds(.2f);
         rb.gravityScale = FallGravity;
+    }
+
+    IEnumerator C_Walled(bool walled)
+    {
+        while (walled)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.1f);
+            yield return null;
+        }
     }
 
     IEnumerator C_JumpBlindness()

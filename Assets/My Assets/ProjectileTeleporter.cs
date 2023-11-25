@@ -21,12 +21,12 @@ public class ProjectileTeleporter : MonoBehaviour
         PlayerCharacterScr = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCharacter>();
         InputHandlerScr = GameObject.FindGameObjectWithTag("Player").GetComponent<InputHandler>();
         FireScr = GameObject.FindGameObjectWithTag("Player").GetComponent<Fire>();
-        
         StartCoroutine(C_Destroy());
     }
 
     private void Update()
     {
+
         TeleporterLocation = transform;
     }
 
@@ -48,6 +48,8 @@ public class ProjectileTeleporter : MonoBehaviour
         {
             StickToSurface(collision.contacts[0].point);
         }
+
+        gameObject.GetComponent<TrailRenderer>().enabled = false;
     }
 
     private void StickToSurface(Vector2 contactPoint)
@@ -61,6 +63,7 @@ public class ProjectileTeleporter : MonoBehaviour
     public void TeleportPlayer()
     {
         PlayerCharacterScr.SetTeleporterLocation(TeleporterLocation);
+        gameObject.GetComponent<TrailRenderer>().enabled = true;
         Destroy(gameObject);
         InputHandlerScr.m_b_InTeleporterActive = false;
     }
@@ -75,6 +78,7 @@ public class ProjectileTeleporter : MonoBehaviour
 
     IEnumerator C_Destroy()
     {
+        gameObject.GetComponent<TrailRenderer>().enabled = true;
         yield return new WaitForSeconds(4f);
         Destroy(gameObject);
         InputHandlerScr.m_b_InTeleporterActive = false;

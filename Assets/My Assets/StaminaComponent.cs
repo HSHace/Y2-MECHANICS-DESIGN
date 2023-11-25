@@ -12,7 +12,8 @@ public class StaminaComponent : MonoBehaviour
     public float m_MaxStamina = 100.0f;
     private float idleRecovery = 0.5f;
 
-    Coroutine c_RStaminaDrain;
+    Coroutine c_RStaminaRegen;
+    Coroutine c_RBackUpStamina;
     InputHandler InputHandlerScr;
     HealthComponent HealthComponentScr;
 
@@ -28,14 +29,14 @@ public class StaminaComponent : MonoBehaviour
     {
         m_CurrentStamina = Mathf.Clamp(m_CurrentStamina - stamina, 0, m_MaxStamina);
 
-        if(c_RStaminaDrain == null)
+        if(c_RStaminaRegen == null)
         {
-            c_RStaminaDrain = StartCoroutine(C_StaminaRegeneration());
+            c_RStaminaRegen = StartCoroutine(C_StaminaRegeneration());
         }
-        else if(c_RStaminaDrain !=null)
+        else if(c_RStaminaRegen !=null)
         {
-            StopCoroutine(c_RStaminaDrain);
-            c_RStaminaDrain = StartCoroutine(C_StaminaRegeneration());
+            StopCoroutine(c_RStaminaRegen);
+            c_RStaminaRegen = StartCoroutine(C_StaminaRegeneration());
         }
 
         canMove = (m_CurrentStamina > 0);
@@ -43,6 +44,11 @@ public class StaminaComponent : MonoBehaviour
         if(HealthComponentScr.c_RHealthRegeneration == null)
         {
             HealthComponentScr.c_RHealthRegeneration = StartCoroutine(HealthComponentScr.C_HealthRegeneration());
+        }
+
+        if(c_RBackUpStamina == null)
+        {
+            StartCoroutine(C_BackUpStamina());
         }
     }
     public void StaminaRegeneration(float stamina)
@@ -61,8 +67,21 @@ public class StaminaComponent : MonoBehaviour
             idleRecovery += idleRecovery * 1.01f;
         }
 
-        c_RStaminaDrain = null;
+        c_RStaminaRegen = null;
         m_b_InStaminaRegen = false;
         idleRecovery = 0.5f;
+    }
+
+    private IEnumerator C_BackUpStamina()
+    {
+        while (m_CurrentStamina != m_MaxStamina)
+        {
+            yield return new WaitForSeconds(3f);
+
+            if (c_RStaminaRegen == null)
+            {
+                c_RStaminaRegen = StartCoroutine(C_StaminaRegeneration());
+            }
+        }
     }
 }

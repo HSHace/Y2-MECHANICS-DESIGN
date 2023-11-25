@@ -10,13 +10,25 @@ public class HealthComponent : MonoBehaviour
     public bool dead;
     private bool m_b_InHeal;
 
+    public Vector2 respawnPoint;
     public Coroutine c_RHealthRegeneration;
+
+    Rigidbody2D rb;
+    BoxCollider2D collider2d;
     StaminaComponent StaminaComponentScr;
 
     private void Awake()
     {
         currentHealth = maxHealth;
+        rb = GetComponent<Rigidbody2D>();
+        collider2d = GetComponent<BoxCollider2D>();
         StaminaComponentScr = GetComponent<StaminaComponent>();
+        respawnPoint = gameObject.transform.position;
+    }
+
+    public void RespawnPoint(Vector2 position)
+    {
+        respawnPoint = position;
     }
 
     public void Damage(float damage)
@@ -27,7 +39,7 @@ public class HealthComponent : MonoBehaviour
         if(currentHealth <= 0)
         {
             dead = true;
-            GetComponent<Healthbar>().enabled = false;
+            Die();
         }
 
         if(c_RHealthRegeneration == null)
@@ -41,6 +53,15 @@ public class HealthComponent : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth + heal, 0, maxHealth);
     }
 
+    public void Die()
+    {
+        currentHealth = 0f;
+        collider2d = GetComponent<BoxCollider2D>();
+        collider2d.enabled = false;
+        rb.velocity = new Vector2(rb.velocity.x, 10f);
+        StartCoroutine(Respawn());
+    }
+
     public IEnumerator C_HealthRegeneration()
     {
         m_b_InHeal = true;
@@ -52,5 +73,15 @@ public class HealthComponent : MonoBehaviour
 
         m_b_InHeal = false;
         c_RHealthRegeneration = null;
+    }
+
+    private IEnumerator Respawn()
+    {
+        yield return new WaitForSeconds(1f);
+        transform.position = respawnPoint;
+        StaminaComponentScr.m_CurrentStamina = StaminaComponentScr.m_MaxStamina;
+        collider2d.enabled = true;
+        dead = false;
+        currentHealth = maxHealth;
     }
 }

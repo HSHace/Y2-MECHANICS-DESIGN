@@ -24,6 +24,9 @@ public class Projectile : MonoBehaviour
         {
             EnemyCharacter enemyCharacter = collision.gameObject.GetComponent<EnemyCharacter>();
             enemyCharacter.TakeDamage(ShurikenDamage);
+            GameObject enemy = collision.gameObject;
+            enemy.GetComponent<PopUpText>();
+
             Destroy(gameObject);
         }
 

@@ -11,7 +11,7 @@ public class Fire : MonoBehaviour
     private float ShurikenRotation = 100f;
     public float teleporterSpeed;
     private float TeleporterCooldown = 2f;
-    public float meleeDamage = 40f;
+    public float meleeDamage;
     public float meleeRange = 0.5f;
 
     public bool shurikenFired = false;

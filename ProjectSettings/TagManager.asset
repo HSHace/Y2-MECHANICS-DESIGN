@@ -10,6 +10,7 @@ TagManager:
   - Walls
   - ProjectileTeleporter
   - Ground
+  - SemiSolid
   layers:
   - Default
   - TransparentFX
@@ -61,4 +62,7 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 961982257
+    locked: 0
+  - name: DamageValue
+    uniqueID: 2398989451
     locked: 0
