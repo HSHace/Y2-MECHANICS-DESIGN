@@ -26,6 +26,14 @@ public class HealthComponent : MonoBehaviour
         respawnPoint = gameObject.transform.position;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Damage(10f);
+        }
+    }
+
     public void RespawnPoint(Vector2 position)
     {
         respawnPoint = position;

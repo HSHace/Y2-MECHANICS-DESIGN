@@ -21,7 +21,6 @@ public class Checkpoint : MonoBehaviour
             if (player != null)
             {
                 player.RespawnPoint(position);
-                Debug.Log("WORKS");
             }
         }  
     }

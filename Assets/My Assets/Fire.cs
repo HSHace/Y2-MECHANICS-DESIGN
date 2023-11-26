@@ -58,6 +58,7 @@ public class Fire : MonoBehaviour
         {
             var bullet = Instantiate(ProjectileObj, ProjectileSpawnPoint.position, transform.rotation);
             bullet.transform.rotation = target;
+            StartCoroutine(PlayerCharacterScr.C_CameraShake(0.1f, 0.5f));
             bullet.GetComponent<Rigidbody2D>().AddForce(ProjectileSpawnPoint.right * shurikenSpeed, ForceMode2D.Impulse);
             //bullet.GetComponent<Rigidbody2D>().velocity = PlayerCharacterScr.FireDirection * shurikenSpeed;
 
@@ -79,6 +80,7 @@ public class Fire : MonoBehaviour
             //GameObject TeleporterProjectile = GameObject.FindGameObjectWithTag("ProjectileTeleporter");
             //ProjectileTeleporter teleport = TeleporterProjectile.GetComponent<ProjectileTeleporter>();
             bullet.transform.rotation = target;
+            StartCoroutine(PlayerCharacterScr.C_CameraShake(0.1f, 0.5f));
             bullet.GetComponent<Rigidbody2D>().AddForce(ProjectileSpawnPoint.right * teleporterSpeed, ForceMode2D.Impulse);
 
             if(c_RTeleporter == null)
@@ -108,7 +110,13 @@ public class Fire : MonoBehaviour
 
     public void Melee()
     {
+
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(ProjectileSpawnPoint.position, meleeRange, m_EnemyLayer);
+        
+        if(hitEnemies != null)
+        {
+            StartCoroutine(PlayerCharacterScr.C_CameraShake(0.1f, 2f));
+        }
 
         if (InputHandlerScr.m_b_InMeleeActive)
         {

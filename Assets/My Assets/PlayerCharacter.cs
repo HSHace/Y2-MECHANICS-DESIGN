@@ -38,6 +38,7 @@ public class PlayerCharacter : MonoBehaviour
 
     public ParticleSystem particleDust;
     public ParticleSystem particleDash;
+    public ParticleSystem particleSlam;
     public ParticleSystem particleCircle;
     public ParticleSystem particleStar;
     public ParticleSystem particleFlash;
@@ -52,7 +53,8 @@ public class PlayerCharacter : MonoBehaviour
     GroundedComp GroundedComp;
     StaminaComponent StaminaComponentScr;
     Fire FireScr;
-    
+    CameraShake CameraShakeScr;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -60,6 +62,7 @@ public class PlayerCharacter : MonoBehaviour
         InputHandler = GetComponent<InputHandler>();
         StaminaComponentScr = GetComponent<StaminaComponent>();
         FireScr = GetComponent<Fire>();
+        CameraShakeScr = GameObject.FindGameObjectWithTag("Camera").GetComponent<CameraShake>();
         canDash = true;
     }
 
@@ -82,7 +85,9 @@ public class PlayerCharacter : MonoBehaviour
             Debug.Log("Player is grounded!");
             isJumping = false;
             isSlaming = false;
+            particleSlam.Stop();
             canDash = true;
+            StartCoroutine(C_CameraShake(0.1f, 1.8f));
 
             if (!isDashing)
             {
@@ -139,6 +144,7 @@ public class PlayerCharacter : MonoBehaviour
             StartCoroutine(C_JumpBlindness());
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            StartCoroutine(C_CameraShake(0.2f, 2f));
             StaminaComponentScr.StaminaDrain(5f);
 
             if (!GroundedComp.IsGrounded)
@@ -179,10 +185,15 @@ public class PlayerCharacter : MonoBehaviour
 
     public void PlayerSlam()
     {
-        rb.AddForce(Vector2.down * SlamForce, ForceMode2D.Impulse);
-        StaminaComponentScr.StaminaDrain(15f);
-        isJumping = false;
-        isSlaming = true;
+        if (!GroundedComp.IsGrounded)
+        {
+            StartCoroutine(C_SlamFlash(particleSlam));
+            StartCoroutine(C_CameraShake(1f, 2f));
+            rb.AddForce(Vector2.down * SlamForce, ForceMode2D.Impulse);
+            StaminaComponentScr.StaminaDrain(15f);
+            isJumping = false;
+            isSlaming = true;
+        }
     }
 
     public void Flip(GameObject player)
@@ -216,6 +227,7 @@ public class PlayerCharacter : MonoBehaviour
         rb.AddForce(transform.up * DashForce/6, ForceMode2D.Impulse);
         yield return new WaitForSeconds(0.1f);
         Vector2 initialVelocity = rb.velocity;
+        StartCoroutine(C_CameraShake(0.225f, 6f));
         rb.velocity = FireScr.ProjectileSpawnPoint.right * DashForce;
         StaminaComponentScr.StaminaDrain(15f);
         yield return new WaitForSeconds(DashTime);
@@ -261,15 +273,6 @@ public class PlayerCharacter : MonoBehaviour
         rb.gravityScale = FallGravity;
     }
 
-    IEnumerator C_Walled(bool walled)
-    {
-        while (walled)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.1f);
-            yield return null;
-        }
-    }
-
     IEnumerator C_JumpBlindness()
     {
         jumpBufferStatus = true;
@@ -286,5 +289,19 @@ public class PlayerCharacter : MonoBehaviour
         flashEffect.Stop();
         starEffect.Stop();
         circleEffect.Stop();
+    }
+
+    IEnumerator C_SlamFlash(ParticleSystem slamEffect)
+    {
+        slamEffect.Play();
+        yield return new WaitForSeconds(1.5f);
+        slamEffect.Stop();
+    }
+
+    public IEnumerator C_CameraShake(float shakeTime, float intensity)
+    {
+        CameraShakeScr.CameraShakeStart(intensity);
+        yield return new WaitForSeconds(shakeTime);
+        CameraShakeScr.CameraShakeStop();
     }
 }
