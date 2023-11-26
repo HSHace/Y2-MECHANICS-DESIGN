@@ -36,7 +36,11 @@ public class PlayerCharacter : MonoBehaviour
     bool jumpBufferStatus;
     bool coyoteTime;
 
-    public ParticleSystem Dust;
+    public ParticleSystem particleDust;
+    public ParticleSystem particleDash;
+    public ParticleSystem particleCircle;
+    public ParticleSystem particleStar;
+    public ParticleSystem particleFlash;
 
     Coroutine c_RJumpBuffer;
     Coroutine c_RCoyoteTime;
@@ -191,6 +195,7 @@ public class PlayerCharacter : MonoBehaviour
 
     public void SetTeleporterLocation(Transform teleporterLocation)
     {
+        StartCoroutine(C_TeleportFlash(particleCircle, particleStar, particleFlash));
         transform.position = teleporterLocation.position;
     }
 
@@ -198,7 +203,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         if (GroundedComp.IsGrounded)
         {
-            Dust.Play();
+            particleDust.Play();
         }
     }
 
@@ -206,6 +211,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         isDashing = true;
         canDash = false;
+        particleDash.Play();
         rb.gravityScale = 0f;
         rb.AddForce(transform.up * DashForce/6, ForceMode2D.Impulse);
         yield return new WaitForSeconds(0.1f);
@@ -217,6 +223,7 @@ public class PlayerCharacter : MonoBehaviour
         rb.AddForce(FireScr.ProjectileSpawnPoint.right * DashForce / 6, ForceMode2D.Impulse);
         rb.gravityScale = DefaultGravity;
         isDashing = false;
+        particleDash.Stop();
         yield return new WaitForSeconds(DashCooldown);
         canDash = true;
         c_RDash = null;
@@ -268,5 +275,16 @@ public class PlayerCharacter : MonoBehaviour
         jumpBufferStatus = true;
         yield return new WaitForSeconds(0.2f);
         jumpBufferStatus = false;
+    }
+
+    IEnumerator C_TeleportFlash(ParticleSystem circleEffect, ParticleSystem starEffect, ParticleSystem flashEffect)
+    {
+        flashEffect.Play();
+        circleEffect.Play();
+        starEffect.Play();
+        yield return new WaitForSeconds(0.1f);
+        flashEffect.Stop();
+        starEffect.Stop();
+        circleEffect.Stop();
     }
 }

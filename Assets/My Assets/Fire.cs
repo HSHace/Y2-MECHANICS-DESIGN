@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 public class Fire : MonoBehaviour
 {
@@ -30,6 +32,7 @@ public class Fire : MonoBehaviour
     [SerializeField] public Transform m_tPivot;
     [SerializeField] Camera m_Cam;
     public Vector2 m_MousePos;
+    public Vector2 lookDir;
     public Quaternion target;
 
     Rigidbody2D m_RB;
@@ -89,7 +92,7 @@ public class Fire : MonoBehaviour
     {
         m_MousePos = m_Cam.ScreenToWorldPoint(Input.mousePosition);
 
-        Vector2 lookDir = m_MousePos - m_RB.position;
+        lookDir = m_MousePos - m_RB.position;
         float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg;
         target = Quaternion.Euler(0, 0, angle);
 
@@ -105,7 +108,6 @@ public class Fire : MonoBehaviour
 
     public void Melee()
     {
-        Debug.Log("Melee performed");
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(ProjectileSpawnPoint.position, meleeRange, m_EnemyLayer);
 
         if (InputHandlerScr.m_b_InMeleeActive)
