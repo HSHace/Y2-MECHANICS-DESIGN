@@ -9,21 +9,18 @@ public class GroundedComp : MonoBehaviour
     private bool m_bGrounded;
     private bool m_bWalled;
     public event Action<bool> OnGroundedChanged;
-    public event Action<bool> OnWallChanged;
     public bool IsGrounded { get { return m_bGrounded; } }
 
     [SerializeField] private Collider2D m_GroundCol;
     [SerializeField] private LayerMask m_GroundLayer;
-    [SerializeField] private LayerMask m_WallLayer;
 
     Rigidbody2D rb;
     InputHandler InputHandler;
-    PlayerCharacter PlayerCharacterScr;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         InputHandler = GetComponent<InputHandler>();
-        PlayerCharacterScr = GetComponent<PlayerCharacter>();
         if (!m_GroundCol) m_GroundCol = GetComponent<Collider2D>();
     }
 

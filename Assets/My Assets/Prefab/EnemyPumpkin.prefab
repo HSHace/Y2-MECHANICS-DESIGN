@@ -173,10 +173,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentEnemyHealth: 0
-  maxEnemyHealth: 100
+  maxEnemyHealth: 1000
   flashMaterial: {fileID: 2100000, guid: 0446339305790284ead516246e06b0cb, type: 2}
   DamageIndicator: {fileID: 7519947433454320601, guid: a48a590f64c569342b5e520218845673, type: 3}
   triggerBox: {fileID: 0}
+  enemyAlive: 0
 --- !u!1 &1669515085730800119
 GameObject:
   m_ObjectHideFlags: 0

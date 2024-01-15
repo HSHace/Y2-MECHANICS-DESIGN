@@ -1,10 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.IO.Pipes;
 using Unity.VisualScripting;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
-using static UnityEngine.ParticleSystem;
 
 public class Fire : MonoBehaviour
 {
@@ -33,6 +29,7 @@ public class Fire : MonoBehaviour
     [SerializeField] Camera m_Cam;
     public Vector2 m_MousePos;
     public Vector2 lookDir;
+    public Vector3 shurikenRotation;
     public Quaternion target;
 
     Rigidbody2D m_RB;
@@ -129,19 +126,10 @@ public class Fire : MonoBehaviour
 
         foreach (Collider2D enemy in hitEnemies) 
         {
-            enemy.GetComponent<EnemyCharacter>().TakeDamage(meleeDamage);
+            enemy.GetComponent<EnemyCharacter>().TakeDamage(meleeDamage, 2f, 1f);
         }
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        if (ProjectileSpawnPoint == null)
-        {
-            return;
-        }
-
-        Gizmos.DrawWireSphere(ProjectileSpawnPoint.position, meleeRange);
-    }
     public IEnumerator C_Shuriken()
     {
         shurikenFired = true;
@@ -152,9 +140,9 @@ public class Fire : MonoBehaviour
 
     private IEnumerator C_ShurikenRotation(GameObject shuriken)
     {
-        while(shurikenFired)
+        while(shuriken)
         {
-            shuriken.transform.Rotate(Vector3.forward * Time.deltaTime * ShurikenRotation);
+            shuriken.transform.Rotate(shurikenRotation);
             yield return null;
         }
     }
@@ -166,22 +154,14 @@ public class Fire : MonoBehaviour
         teleporterFired = false;
         c_RTeleporter = null;
     }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (ProjectileSpawnPoint == null)
+        {
+            return;
+        }
+
+        Gizmos.DrawWireSphere(ProjectileSpawnPoint.position, meleeRange);
+    }
 }
-
-//Vector3 rotation = mousePos - transform.position;
-//rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
-//transform.rotation = Quaternion.Euler(0,0, rotZ);
-
-
-
-//FIRETELEPORTER FUNCTION
-//if(teleport.facingRight && !PlayerCharacterScr.m_b_FacingRight)
-//{
-//    teleport.FlipProjectile();
-//}
-//else if(!teleport.facingRight && PlayerCharacterScr.m_b_FacingRight)
-//{
-//    teleport.FlipProjectile();
-//}
-
-//bullet.GetComponent<Rigidbody2D>().velocity = PlayerCharacterScr.FireDirection * teleporterSpeed;

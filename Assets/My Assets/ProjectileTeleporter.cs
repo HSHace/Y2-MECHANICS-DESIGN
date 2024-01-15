@@ -26,7 +26,6 @@ public class ProjectileTeleporter : MonoBehaviour
 
     private void Update()
     {
-
         TeleporterLocation = transform;
     }
 
@@ -41,7 +40,7 @@ public class ProjectileTeleporter : MonoBehaviour
             EnemyCharacter enemyCharacter = collision.gameObject.GetComponent<EnemyCharacter>();
             if (enemyCharacter != null)
             {
-                enemyCharacter.TakeDamage(TeleporterDamage);
+                enemyCharacter.TakeDamage(TeleporterDamage, 1.5f, 2f);
             }
         }
         else if (collision.gameObject.CompareTag("Ground"))

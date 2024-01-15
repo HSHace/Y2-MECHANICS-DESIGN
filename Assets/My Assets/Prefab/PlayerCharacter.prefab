@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 1900317621724553559}
   - component: {fileID: 4336369167529481694}
   - component: {fileID: 8555477082953333097}
-  - component: {fileID: 3454188634375199466}
   - component: {fileID: 8802622920900676804}
   - component: {fileID: 1185472755857218251}
   - component: {fileID: 5970264845751150957}
@@ -180,6 +179,7 @@ MonoBehaviour:
     m_Bits: 8
   castPosition: {fileID: 434560914282467962}
   luffy: {fileID: 5557706922737789650}
+  rasengan: {fileID: 8730353057224160672, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
   m_b_FacingRight: 1
   isJumping: 0
   isWalling: 0
@@ -193,6 +193,7 @@ MonoBehaviour:
   particleCircle: {fileID: 3495724610058345897}
   particleStar: {fileID: 2917648944366894034}
   particleFlash: {fileID: 3535643840748045704}
+  TPSounds: []
 --- !u!114 &4174856011120586333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,9 +210,6 @@ MonoBehaviour:
   m_GroundLayer:
     serializedVersion: 2
     m_Bits: 8
-  m_WallLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &1900317621724553559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,24 +273,6 @@ MonoBehaviour:
   m_b_InStaminaRegen: 0
   m_CurrentStamina: 0
   m_MaxStamina: 100
---- !u!114 &3454188634375199466
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 745982820834278148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b91e86aaed2a004fbdfd9ee3525a06f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CastPositionUpper: {fileID: 5741577323760845374}
-  CastPositionLower: {fileID: 3558257085219448343}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  CircleRadius: 0.15
 --- !u!61 &8802622920900676804
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -875,12 +855,84 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4263209551308471804}
   - {fileID: 1014529581135524955}
   - {fileID: 7409706697401301776}
   - {fileID: 6622596464343715374}
   m_Father: {fileID: 7393473646054425930}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3815276799766913674
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2937278711033877124}
+    m_Modifications:
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.515
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.017
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8730353057224160672, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_Name
+      value: Rasengan
+      objectReference: {fileID: 0}
+    - target: {fileID: 8730353057224160672, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2466269203984354088, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+--- !u!4 &4263209551308471804 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1142612994101763958, guid: a2aa78aeeea6bcb448ff1c31de234a7c, type: 3}
+  m_PrefabInstance: {fileID: 3815276799766913674}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4262400392557488890
 PrefabInstance:
   m_ObjectHideFlags: 0

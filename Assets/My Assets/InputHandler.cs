@@ -20,6 +20,7 @@ public class InputHandler : MonoBehaviour
     public Coroutine c_RJump;
     public Coroutine c_RSlam;
     public Coroutine c_RGravityApex;
+    public Coroutine c_RRasengan;
 
     Rigidbody2D rb;
     PlayerCharacter PlayerCharacterScr;
@@ -61,6 +62,8 @@ public class InputHandler : MonoBehaviour
 
         m_PlayerInput.actions.FindAction("Melee").performed += Handle_MeleePerformed;
         m_PlayerInput.actions.FindAction("Melee").canceled += Handle_MeleeCancelled;
+
+        m_PlayerInput.actions.FindAction("Rasengan").performed += Handle_RasenganPerformed;
 
 
         m_PlayerInput.actions.FindAction("Damage").performed += Handle_DamagePerformed;
@@ -220,6 +223,20 @@ public class InputHandler : MonoBehaviour
     {
         m_b_InMeleeActive = false;
         FireScr.MeleeObj.SetActive(false);
+    }
+
+    private void Handle_RasenganPerformed(InputAction.CallbackContext context)
+    {
+        if (c_RRasengan == null)
+        {
+            c_RRasengan = StartCoroutine(PlayerCharacterScr.C_Rasengan());
+        }
+        else if(c_RRasengan != null)
+        {
+            StopCoroutine(c_RRasengan);
+            c_RRasengan = null;
+            PlayerCharacterScr.rasengan.SetActive(false);
+        }
     }
 
     private void Handle_DamagePerformed(InputAction.CallbackContext context)

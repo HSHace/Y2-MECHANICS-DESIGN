@@ -10,6 +10,7 @@ public class EnemyCharacter : MonoBehaviour
     [SerializeField] GameObject DamageIndicator;
     [SerializeField] BoxCollider2D triggerBox;
 
+    public bool enemyAlive;
     private bool enemyRight;
     private bool playerDetected;
 
@@ -20,15 +21,19 @@ public class EnemyCharacter : MonoBehaviour
     SpriteRenderer enemySprite;
     Material defaultMaterial;
     Coroutine c_REnemyMove;
+    Coroutine c_RDie;
 
     PlayerCharacter PlayerCharacterScr;
     Rigidbody2D rb;
+
+    Fire FireScr;
 
     private void Awake()
     {
         enemySprite = GetComponent<SpriteRenderer>();
         PlayerCharacterScr = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerCharacter>();
         rb = GetComponent<Rigidbody2D>();
+        FireScr = GetComponent<Fire>();
         currentEnemyHealth = maxEnemyHealth;
         defaultColor = enemySprite.color;
         defaultMaterial = enemySprite.material;
@@ -38,15 +43,14 @@ public class EnemyCharacter : MonoBehaviour
     public void Move()
     {
         initialVelocity = new Vector2(rb.velocity.x, rb.velocity.y);
-
         Vector2 target = new Vector2(PlayerCharacterScr.transform.position.x, rb.position.y);
         Vector2 newPos = Vector2.MoveTowards(rb.position, target, 10f * Time.fixedDeltaTime);
         rb.MovePosition(newPos);
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, float distanceX, float distanceY)
     {
-        EnemyKnockback();
+        EnemyKnockback(distanceX, distanceY);
         currentEnemyHealth -= damage;
         StartCoroutine(C_SpriteFlash());
         ShowDamageIndicator(-damage);
@@ -54,7 +58,7 @@ public class EnemyCharacter : MonoBehaviour
 
         if (currentEnemyHealth <= 0)
         {
-            Die();
+            c_RDie = StartCoroutine(C_Die());
         }
     }
 
@@ -76,18 +80,11 @@ public class EnemyCharacter : MonoBehaviour
         }
     }
 
-    public void EnemyKnockback()
+    public void EnemyKnockback(float distanceX, float distanceY)
     {
         rb.velocity = initialVelocity;
-        rb.velocity = new Vector2(rb.velocity.x * PlayerCharacterScr.m_faxis + 1.5f, rb.velocity.y + 2f);
-        Debug.Log("ENEMY KNCOKCBACK!");
-    }
-
-    public void Die()
-    {
-        GetComponent<Collider2D>().enabled = false;
-        this.enabled = false;
-        gameObject.SetActive(false);
+        rb.velocity = new Vector2(rb.velocity.x * PlayerCharacterScr.m_faxis + distanceX, rb.velocity.y + distanceY);
+        Debug.Log("ENEMY KNOCKBACK!");
     }
 
     public void Flip(GameObject player)
@@ -98,6 +95,17 @@ public class EnemyCharacter : MonoBehaviour
         enemyRight = !enemyRight;
     }
 
+    public IEnumerator C_Die()
+    {
+        Debug.Log("DIE COROUTINE STARTED!");
+        yield return new WaitForSeconds(0.4f);
+        Debug.Log("DIEING");
+        GetComponent<Collider2D>().enabled = false;
+        StopCoroutine(PlayerCharacterScr.C_CameraShake(0.0f, 0.0f));
+        //this.enabled = false;
+        gameObject.SetActive(false);
+        Debug.Log("DIE COROUTINE ENDED!");
+    }
 
     IEnumerator C_EnemyMove()
     {

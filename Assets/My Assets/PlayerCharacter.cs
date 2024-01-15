@@ -24,6 +24,7 @@ public class PlayerCharacter : MonoBehaviour
     [SerializeField] public LayerMask m_LayerMask;
     [SerializeField] Transform castPosition;
     [SerializeField] GameObject luffy;
+    [SerializeField] public GameObject rasengan;
 
     public float m_faxis { get; set; }
     public bool m_b_FacingRight = true;
@@ -43,9 +44,11 @@ public class PlayerCharacter : MonoBehaviour
     public ParticleSystem particleStar;
     public ParticleSystem particleFlash;
 
+    [SerializeField] AudioClip[] TPSounds;
+    private AudioSource PlayerAudioSource;
+
     Coroutine c_RJumpBuffer;
     Coroutine c_RCoyoteTime;
-    Coroutine c_RWalled;
     public Coroutine c_RDash;
 
     Rigidbody2D rb;
@@ -58,12 +61,15 @@ public class PlayerCharacter : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        PlayerAudioSource = GetComponent<AudioSource>();
         GroundedComp = GetComponent<GroundedComp>();
         InputHandler = GetComponent<InputHandler>();
         StaminaComponentScr = GetComponent<StaminaComponent>();
         FireScr = GetComponent<Fire>();
         CameraShakeScr = GameObject.FindGameObjectWithTag("Camera").GetComponent<CameraShake>();
         canDash = true;
+        isDashing = false;
+        rasengan.SetActive(false);
     }
 
     private void OnEnable()
@@ -185,7 +191,7 @@ public class PlayerCharacter : MonoBehaviour
 
     public void PlayerSlam()
     {
-        if (!GroundedComp.IsGrounded)
+        if (!GroundedComp.IsGrounded && !isDashing)
         {
             StartCoroutine(C_SlamFlash(particleSlam));
             StartCoroutine(C_CameraShake(1f, 2f));
@@ -208,6 +214,7 @@ public class PlayerCharacter : MonoBehaviour
     {
         StartCoroutine(C_TeleportFlash(particleCircle, particleStar, particleFlash));
         transform.position = teleporterLocation.position;
+        PlayerAudioSource.PlayOneShot(TPSounds[Random.Range(0, TPSounds.Length)], 0.5f);
     }
 
     public void ParticleDust()
@@ -239,6 +246,20 @@ public class PlayerCharacter : MonoBehaviour
         yield return new WaitForSeconds(DashCooldown);
         canDash = true;
         c_RDash = null;
+    }
+
+    public IEnumerator C_Rasengan()
+    {
+        rasengan.SetActive(true);
+        Debug.Log("Rasengan Active");
+        yield return new WaitForSeconds(2f);
+        rasengan.SetActive(false);
+    }
+
+    public IEnumerator C_RasenganDeactivate()
+    {
+        rasengan.SetActive(false);
+        yield return null;
     }
 
     public IEnumerator C_JumpBuffer()
