@@ -6221,7 +6221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1900317621724553559, guid: f72fdd7ac57164f4c8a6a543b6d4eeb0, type: 3}
       propertyPath: shurikenSpeed
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1900317621724553559, guid: f72fdd7ac57164f4c8a6a543b6d4eeb0, type: 3}
       propertyPath: teleporterSpeed

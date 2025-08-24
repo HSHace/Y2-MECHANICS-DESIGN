@@ -45,26 +45,19 @@ public class InputHandler : MonoBehaviour
     {
         m_PlayerInput.actions.FindAction("Movement").performed += Handle_MovePerformed;
         m_PlayerInput.actions.FindAction("Movement").canceled += Handle_MoveCancelled;
-
         m_PlayerInput.actions.FindAction("Jump").performed += Handle_JumpPerformed;
         m_PlayerInput.actions.FindAction("Jump").canceled += Handle_JumpCancelled;
-
         m_PlayerInput.actions.FindAction("Slam").performed += Handle_SlamPerformed;
         m_PlayerInput.actions.FindAction("Slam").canceled += Handle_SlamCancelled;
-
         m_PlayerInput.actions.FindAction("Dash").performed += Handle_DashPerformed;
         m_PlayerInput.actions.FindAction("Dash").canceled += Handle_DashCancelled;
 
         m_PlayerInput.actions.FindAction("Fire").performed += Handle_ProjectileFired;
-
         m_PlayerInput.actions.FindAction("Teleporter").performed += Handle_TeleporterPerformed;
         m_PlayerInput.actions.FindAction("Teleporter").canceled += Handle_TeleporterCancelled;
-
+        m_PlayerInput.actions.FindAction("Rasengan").performed += Handle_RasenganPerformed;
         m_PlayerInput.actions.FindAction("Melee").performed += Handle_MeleePerformed;
         m_PlayerInput.actions.FindAction("Melee").canceled += Handle_MeleeCancelled;
-
-        m_PlayerInput.actions.FindAction("Rasengan").performed += Handle_RasenganPerformed;
-
 
         m_PlayerInput.actions.FindAction("Damage").performed += Handle_DamagePerformed;
     }
@@ -73,21 +66,16 @@ public class InputHandler : MonoBehaviour
     {
         m_PlayerInput.actions.FindAction("Movement").performed -= Handle_MovePerformed;
         m_PlayerInput.actions.FindAction("Movement").canceled -= Handle_MoveCancelled;
-
         m_PlayerInput.actions.FindAction("Jump").performed -= Handle_JumpPerformed;
         m_PlayerInput.actions.FindAction("Jump").canceled -= Handle_JumpCancelled;
-
         m_PlayerInput.actions.FindAction("Slam").performed -= Handle_SlamPerformed;
         m_PlayerInput.actions.FindAction("Slam").canceled -= Handle_SlamCancelled;
-
         m_PlayerInput.actions.FindAction("Dash").performed -= Handle_DashPerformed;
         m_PlayerInput.actions.FindAction("Dash").canceled -= Handle_DashCancelled;
 
         m_PlayerInput.actions.FindAction("Fire").performed -= Handle_ProjectileFired;
-
         m_PlayerInput.actions.FindAction("Teleporter").performed -= Handle_TeleporterPerformed;
         m_PlayerInput.actions.FindAction("Teleporter").canceled -= Handle_TeleporterCancelled;
-
         m_PlayerInput.actions.FindAction("Melee").performed -= Handle_MeleePerformed;
         m_PlayerInput.actions.FindAction("Melee").canceled -= Handle_MeleeCancelled;
 
