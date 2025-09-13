@@ -30,7 +30,7 @@ public class HealthComponent : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            Damage(10f);
+            TakeDamage(10f);
         }
     }
 
@@ -39,7 +39,7 @@ public class HealthComponent : MonoBehaviour
         respawnPoint = position;
     }
 
-    public void Damage(float damage)
+    public void TakeDamage(float damage)
     {
         Debug.Log("Damage taken");
         currentHealth = Mathf.Clamp(currentHealth - damage, 0, maxHealth);

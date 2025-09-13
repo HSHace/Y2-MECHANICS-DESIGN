@@ -122,41 +122,39 @@ public class PlayerCharacter : MonoBehaviour
 
     public void Move()
     {
-        if (!isDashing)
+        if (isDashing) return;
+
+        ParticleDust();
+        //rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
+        rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
+        StaminaComponentScr.StaminaDrain(0.2f);
+
+        //Debug.Log($"Axis: {m_faxis} ");
+
+        if (m_faxis > 0 && !m_b_FacingRight)
         {
-            ParticleDust();
-            //rb.AddForce(transform.right * m_faxis * moveSpeed * 1);
-            rb.velocity = new Vector2(m_faxis * moveSpeed, rb.velocity.y);
-            StaminaComponentScr.StaminaDrain(0.2f);
-
-            //Debug.Log($"Axis: {m_faxis} ");
-
-            if (m_faxis > 0 && !m_b_FacingRight)
-            {
-                Flip(luffy);
-            }
-            else if (m_faxis < 0 && m_b_FacingRight)
-            {
-                Flip(luffy);
-            }
+            Flip(luffy);
+        }
+        else if (m_faxis < 0 && m_b_FacingRight)
+        {
+            Flip(luffy);
         }
     }
 
     public void Jump()
     {
-        if(!isDashing)
+        if (isDashing) return;
+
+        isJumping = true;
+        StartCoroutine(C_JumpBlindness());
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        StartCoroutine(C_CameraShake(0.2f, 2f));
+        StaminaComponentScr.StaminaDrain(5f);
+
+        if (!GroundedComp.IsGrounded)
         {
             isJumping = true;
-            StartCoroutine(C_JumpBlindness());
-            rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            StartCoroutine(C_CameraShake(0.2f, 2f));
-            StaminaComponentScr.StaminaDrain(5f);
-
-            if (!GroundedComp.IsGrounded)
-            {
-                isJumping = true;
-            }
         }
     }
 
@@ -170,22 +168,21 @@ public class PlayerCharacter : MonoBehaviour
 
     public void PlayerJump()
     {
-        if (!isDashing)
+        if (isDashing) return;
+
+        if (GroundedComp.IsGrounded)
         {
-            if (GroundedComp.IsGrounded)
-            {
-                Jump();
-            }
-            else if (coyoteTime)
-            {
-                Jump();
-                StopCoroutine(c_RCoyoteTime);
-                coyoteTime = false;
-            }
-            else if (!GroundedComp.IsGrounded)
-            {
-                c_RJumpBuffer = StartCoroutine(C_JumpBuffer());
-            }
+            Jump();
+        }
+        else if (coyoteTime)
+        {
+            Jump();
+            StopCoroutine(c_RCoyoteTime);
+            coyoteTime = false;
+        }
+        else if (!GroundedComp.IsGrounded)
+        {
+            c_RJumpBuffer = StartCoroutine(C_JumpBuffer());
         }
     }
 
@@ -254,12 +251,6 @@ public class PlayerCharacter : MonoBehaviour
         Debug.Log("Rasengan Active");
         yield return new WaitForSeconds(2f);
         rasengan.SetActive(false);
-    }
-
-    public IEnumerator C_RasenganDeactivate()
-    {
-        rasengan.SetActive(false);
-        yield return null;
     }
 
     public IEnumerator C_JumpBuffer()

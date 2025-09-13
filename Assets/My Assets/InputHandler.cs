@@ -229,7 +229,7 @@ public class InputHandler : MonoBehaviour
 
     private void Handle_DamagePerformed(InputAction.CallbackContext context)
     {
-        HealthComponentScr.Damage(10);
+        HealthComponentScr.TakeDamage(10);
     }
 
     IEnumerator C_MoveUpdate()

@@ -17,7 +17,7 @@ public class Traps : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            HealthComponentScr.Damage(SpikeDamage);
+            HealthComponentScr.TakeDamage(SpikeDamage);
             Rigidbody2D rb = collision.gameObject.GetComponent<Rigidbody2D>();
             PlayerCharacter player = collision.gameObject.GetComponent<PlayerCharacter>();
             rb.velocity = new Vector2(rb.velocity.x, 7.5f);
